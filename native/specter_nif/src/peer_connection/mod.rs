@@ -31,6 +31,7 @@ pub enum Msg {
     GetPendingLocalDescription,
     GetPendingRemoteDescription,
     GetRemoteDescription,
+    GetStats,
     SetLocalDescription(RTCSessionDescription),
     SetRemoteDescription(RTCSessionDescription),
     IceConnectionState,
@@ -396,6 +397,28 @@ fn get_pending_remote_description<'a>(
 
     task::spawn(async move {
         match tx.send(Msg::GetPendingRemoteDescription).await {
+            Ok(_) => (),
+            Err(_err) => trace!("send error"),
+        }
+    });
+
+    (atoms::ok()).encode(env)
+}
+
+#[rustler::nif]
+fn get_stats<'a>(env: Env<'a>, resource: ResourceArc<Ref>, pc_uuid: Term<'a>) -> Term<'a> {
+    let state = match resource.0.lock() {
+        Err(_) => return (atoms::error(), atoms::lock_fail()).encode(env),
+        Ok(guard) => guard,
+    };
+
+    let tx = match state.get_peer_connection(pc_uuid) {
+        None => return (atoms::error(), atoms::not_found()).encode(env),
+        Some(tx) => tx.clone(),
+    };
+
+    task::spawn(async move {
+        match tx.send(Msg::GetStats).await {
             Ok(_) => (),
             Err(_err) => trace!("send error"),
         }
@@ -812,6 +835,19 @@ fn spawn_rtc_peer_connection(resource: ResourceArc<Ref>, api: Arc<API>, uuid: St
                             serde_json::to_string(&desc).unwrap(),
                         )
                             .encode(env),
+                    });
+                }
+                Some(Msg::GetStats) => {
+                    let lock = pc.clone();
+                    let stats = lock.get_stats().await;
+
+                    msg_env.send_and_clear(&pid, |env| {
+                        (
+                            atoms::stats(),
+                            &pc_uuid,
+                            serde_json::to_string(&stats).unwrap(),
+                        )
+                            .encode(env)
                     });
                 }
                 Some(Msg::SetLocalDescription(session)) => {

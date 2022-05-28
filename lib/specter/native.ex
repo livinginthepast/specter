@@ -88,6 +88,12 @@ defmodule Specter.Native do
   def current_remote_description(_ref, _pc), do: error()
 
   @doc """
+  Get the current stats of a peer connection.
+  """
+  @spec get_stats(t(), peer_conn_t()) :: :ok | {:error, term()}
+  def get_stats(_ref, _pc), do: error()
+
+  @doc """
   Sends back state of ICE connection.
   """
   @spec ice_connection_state(t(), peer_conn_t()) :: :ok | {:error, term()}

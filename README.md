@@ -49,6 +49,7 @@ end
 - [x] `Specter.PeerConnection.ice_gathering_state/2`
 - [x] `Specter.PeerConnection.signaling_state/2`
 - [x] `Specter.PeerConnection.connection_state/2`
+- [@] `Specter.PeerConnection.get_stats/2`
 - [ ] pc state changes sent to Elixir pid
 - [ ] `pc.gathering_complete_promise` sends message to callback process
   - might not want to impement this

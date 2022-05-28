@@ -346,6 +346,27 @@ defmodule Specter.PeerConnection do
     do: Native.current_remote_description(ref, pc)
 
   @doc """
+  Sends back a JSON encoded string representing the current stats of a peer connection.
+
+  ## Usage
+
+      iex> {:ok, specter} = Specter.init()
+      iex> {:ok, media_engine} = Specter.new_media_engine(specter)
+      iex> {:ok, registry} = Specter.new_registry(specter, media_engine)
+      iex> {:ok, api} = Specter.new_api(specter, media_engine, registry)
+      iex> {:ok, pc} = Specter.PeerConnection.new(specter, api)
+      iex> assert_receive {:peer_connection_ready, ^pc}
+      ...>
+      iex> Specter.PeerConnection.get_stats(specter, pc)
+      :ok
+      iex> assert_receive {:stats, ^pc, json}
+      iex> {:ok, _stats} = Jason.decode(json)
+  """
+  @spec get_stats(Specter.t(), t()) :: :ok | {:error, term()}
+  def get_stats(%Specter{native: ref}, pc),
+    do: Native.get_stats(ref, pc)
+
+  @doc """
   Sends back state of ICE connection for given peer connection.
   This will send message `t:ice_connection_state_msg_t/0`
   """

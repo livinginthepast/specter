@@ -284,6 +284,62 @@ defmodule Specter.PeerConnectionTest do
     end
   end
 
+  describe "get_stats" do
+    setup [
+      :initialize_specter,
+      :init_api,
+      :init_peer_connection,
+      :create_data_channel
+    ]
+
+    test "returns an error when peer connection does not exist", %{specter: specter} do
+      assert {:error, :not_found} = Specter.PeerConnection.get_stats(specter, UUID.uuid4())
+    end
+
+    test "returns json of all stats", %{specter: specter, peer_connection: pc_offer} do
+      assert :ok = Specter.PeerConnection.get_stats(specter, pc_offer)
+      stats = receive_stats(pc_offer)
+
+      assert %{
+               "data_channels_accepted" => 0,
+               "data_channels_closed" => 0,
+               "data_channels_opened" => 0,
+               "data_channels_requested" => 1,
+               "type" => "peer-connection"
+             } = find_stats(stats, "PeerConnection-")
+
+      api = init_api(specter)
+      pc_answer = init_peer_connection(specter, api)
+      assert :ok = create_data_channel(specter, pc_answer)
+      assert :ok = negotiate_connection(specter, pc_offer, pc_answer)
+
+      assert_stats(specter, pc_offer, "PeerConn",
+        data_channels_accepted: 1,
+        data_channels_closed: 0,
+        data_channels_opened: 1,
+        data_channels_requested: 1
+      )
+
+      assert_stats(specter, pc_answer, "PeerConn",
+        data_channels_accepted: 1,
+        data_channels_closed: 0,
+        data_channels_opened: 1,
+        data_channels_requested: 1
+      )
+
+      assert :ok = Specter.PeerConnection.get_stats(specter, pc_offer)
+      stats = receive_stats(pc_offer)
+
+      assert %{
+               "bytes_received" => bytes_received,
+               "bytes_sent" => bytes_sent
+             } = find_stats(stats, "ice_transport")
+
+      assert bytes_received > 0
+      assert bytes_sent > 0
+    end
+  end
+
   describe "ice_connection_state" do
     setup [:initialize_specter, :init_api, :init_peer_connection]
 

@@ -267,8 +267,12 @@ version = "0.4.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "670ad68c9088c2a963aaa298cb369688cf3f9465ce5e2d4ca10e6e0098a1ce73"
 dependencies = [
+ "libc",
  "num-integer",
  "num-traits",
+ "serde",
+ "time",
+ "winapi",
 ]
 
 [[package]]
@@ -1635,6 +1639,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "time"
+version = "0.1.43"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca8a50ef2360fbd1eeb0ecd46795a87a19024eb4b53c5dc916ca1fd95fe62438"
+dependencies = [
+ "libc",
+ "winapi",
+]
+
+[[package]]
 name = "tinyvec"
 version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1893,11 +1907,11 @@ dependencies = [
 [[package]]
 name = "webrtc"
 version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27d31ce825629e0a7b91c881d6b0a911cd65a7ebb6325fa94fbbddf1c7486f33"
+source = "git+https://github.com/sax/webrtc?branch=serialize-stats#e73f2651f0aec8028c93f9b26697033b61e48919"
 dependencies = [
  "async-trait",
  "bytes",
+ "chrono",
  "hex",
  "interceptor",
  "lazy_static",
@@ -1985,13 +1999,14 @@ dependencies = [
 [[package]]
 name = "webrtc-ice"
 version = "0.6.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08f2a4a1ae47cdce72c648d94895131a80f0ec96d8c78d9187b37d777b9c18cf"
+source = "git+https://github.com/sax/ice?branch=get-conn-stats-from-agent#d28113afe3ceada5823f5f06b2e5f3bd7a70eebb"
 dependencies = [
  "async-trait",
  "crc",
  "log",
  "rand",
+ "serde",
+ "serde_json",
  "stun",
  "thiserror",
  "tokio",

@@ -41,6 +41,7 @@ rustler::atoms! {
     signaling_state,
     set_local_description,
     set_remote_description,
+    stats,
 
     answer,
     offer,

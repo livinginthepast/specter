@@ -301,10 +301,10 @@ defmodule Specter.PeerConnectionTest do
       stats = receive_stats(pc_offer)
 
       assert %{
-               "data_channels_accepted" => 0,
-               "data_channels_closed" => 0,
-               "data_channels_opened" => 0,
-               "data_channels_requested" => 1,
+               "dataChannelsAccepted" => 0,
+               "dataChannelsClosed" => 0,
+               "dataChannelsOpened" => 0,
+               "dataChannelsRequested" => 1,
                "type" => "peer-connection"
              } = find_stats(stats, "PeerConnection-")
 
@@ -331,8 +331,8 @@ defmodule Specter.PeerConnectionTest do
       stats = receive_stats(pc_offer)
 
       assert %{
-               "bytes_received" => bytes_received,
-               "bytes_sent" => bytes_sent
+               "bytesReceived" => bytes_received,
+               "bytesSent" => bytes_sent
              } = find_stats(stats, "ice_transport")
 
       assert bytes_received > 0

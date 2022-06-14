@@ -114,7 +114,10 @@ defmodule SpecterTest.NifHelpers do
 
   def assert_stats(specter, pc, prefix, stats) do
     :ok = Specter.PeerConnection.get_stats(specter, pc)
-    expected = Moar.Map.stringify_keys(stats)
+
+    expected =
+      Moar.Map.stringify_keys(stats)
+      |> Map.new(fn {k, v} -> {Moar.String.to_case(k, :lower_camel_case), v} end)
 
     pc
     |> receive_stats()

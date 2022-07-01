@@ -839,16 +839,15 @@ fn spawn_rtc_peer_connection(resource: ResourceArc<Ref>, api: Arc<API>, uuid: St
                 }
                 Some(Msg::GetStats) => {
                     let lock = pc.clone();
-                    let resp = lock.get_stats().await;
+                    let stats = lock.get_stats().await;
 
-                    msg_env.send_and_clear(&pid, |env| match resp {
-                        Err(err) => (atoms::error(), &pc_uuid, err.to_string()).encode(env),
-                        Ok(stats) => (
+                    msg_env.send_and_clear(&pid, |env| {
+                        (
                             atoms::stats(),
                             &pc_uuid,
                             serde_json::to_string(&stats).unwrap(),
                         )
-                            .encode(env),
+                            .encode(env)
                     });
                 }
                 Some(Msg::SetLocalDescription(session)) => {

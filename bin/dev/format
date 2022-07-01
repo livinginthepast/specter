@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+# FORMATTER SCRIPT
+#
+# Formats Elixir files via `mix format`. This should be considered the canonical
+# formatter for the project.
+#
+# VS Code users in particular should be careful with its Elixir formatter (since 
+# it routinely ignores the formatting settings) and should consider using this 
+# script instead via the `emeraldwalk.runonsave` extension with the following
+# configuration:
+#
+# ```
+#   "emeraldwalk.runonsave": {
+#     "commands": [
+#       {
+#         "match": "\\.ex$|\\.exs$|\\.js$|\\.ts$",
+#         "cmd": "bin/dev/format ${file}"
+#       }
+#     ]
+#   }
+# ```
+#
+# Options: 
+#   <file> or <path>: formats the file or all files in the path
+#   --all: formats all files in the current directory
+#   --cd: formats all files in the given directory
+#   --check: fails if some files are not formatted
+
+
+set -e
+
+file=$1
+
+assert_file() {
+  if [ ! -f "$1" ]; then
+    echo "error: file '${1}' does not exist"
+    exit 1
+  fi
+}
+
+case $1 in
+  --all)
+    mix format
+    ;;
+
+  --cd)
+    cd $2
+    shift
+    shift
+    ;;
+
+  --check)
+    mix format --check-formatted
+    ;;
+
+  *.ex | *.exs)
+    assert_file $1
+    mix format "$1"
+    ;;
+
+  *)
+    echo "unknown flag or file type: '$1'"
+    echo ""
+    echo "USAGE"
+    echo "  $0 <file> or <path>"
+    echo "  $0 --all"
+    echo "  $0 --cd <path>"
+    echo "  $0 --check"
+    exit 1
+    ;;
+esac

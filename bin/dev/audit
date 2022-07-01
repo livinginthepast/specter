@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 set -u
 set -o pipefail
 
@@ -7,12 +6,8 @@ trap "exit" INT
 
 source ".medic/_support/doctor.sh"
 
-check "Check formatting" "mix format --check-formatted" "mix format"
-check "Check Rust formatting" \
-  "cargo fmt --manifest-path native/specter_nif/Cargo.toml --check" \
-  "cargo fmt --manifest-path native/specter_nif/Cargo.toml"
+check "Check formatting" "bin/dev/format --check" "bin/dev/format --all"
+step "Auditing Elixir deps" "mix deps.audit"
+step "Credo" "mix credo --strict"
+step "Dialyzer" "mix dialyzer"
 check "Checking for unused deps" "mix deps.unlock --check-unused" "mix deps.clean --unused --unlock"
-check "Auditing Elixir deps" "mix deps.audit" "# fix issues"
-check "Credo" "mix credo --strict" "# fix issues"
-check "Dialyzer" "mix dialyzer" "# fix issues"
-

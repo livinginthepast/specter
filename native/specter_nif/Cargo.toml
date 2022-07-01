@@ -17,4 +17,4 @@ rustler = "0.24"
 serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 uuid = "0.8"
-webrtc = "0.4"
+webrtc = { version = "0.4", git = "https://github.com/sax/webrtc", branch = "serialize-stats" }

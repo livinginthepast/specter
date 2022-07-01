@@ -10,7 +10,7 @@ on:
       - main
 env:
   ELIXIR_VERSION: "1.13.4"
-  OTP_VERSION: "25.0"
+  OTP_VERSION: "25.0.2"
 jobs:
   build:
     name: Build
@@ -169,7 +169,7 @@ jobs:
             native/specter_nif/target
           key: ${{ runner.os }}-cargo-v1-${{ hashFiles('**/Cargo.lock') }}
       - name: Publish to Hex
-        uses: ./.github/publish
+        uses: synchronal/hex-publish-action@v1
         with:
           name: specter
           key: ${{ secrets.HEX_PM_KEY }}

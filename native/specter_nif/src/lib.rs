@@ -34,6 +34,7 @@ rustler::init!(
         peer_connection::get_remote_description,
         peer_connection::get_pending_local_description,
         peer_connection::get_pending_remote_description,
+        peer_connection::get_stats,
         peer_connection::ice_connection_state,
         peer_connection::ice_gathering_state,
         peer_connection::new,
